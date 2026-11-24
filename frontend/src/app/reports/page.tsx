@@ -36,8 +36,9 @@ export default function ReportsPage() {
     try {
       setDownloading(typeKey);
       const token = localStorage.getItem("sentinel_token");
-      const activeOrg = localStorage.getItem("sentinel_active_org");
-      const res = await fetch(`http://localhost:8000/api/v1/reports/${endpoint}`, {
+      const activeOrg = localStorage.getItem("sentinel_active_org") || localStorage.getItem("sentinel_org_id");
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+      const res = await fetch(`${apiBase}/reports/${endpoint}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "X-Organization-Id": activeOrg || "",

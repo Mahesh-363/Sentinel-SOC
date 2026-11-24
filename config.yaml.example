@@ -9,7 +9,7 @@
 server:
   url: "http://127.0.0.1:8000"
   verify_ssl: true
-  timeout_seconds: 15
+  timeout_seconds: 60
 
 auth:
   enrollment_token: ""

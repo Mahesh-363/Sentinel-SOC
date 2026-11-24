@@ -6,7 +6,7 @@ class SensorConfig:
     def __init__(self, config_path: str = "config.yaml"):
         self.config_path = config_path
         self.data: Dict[str, Any] = {
-            "server": {"url": "http://localhost:8000", "verify_ssl": True, "timeout_seconds": 15},
+            "server": {"url": "http://localhost:8000", "verify_ssl": True, "timeout_seconds": 60},
             "auth": {"enrollment_token": "", "sensor_id": "", "api_key": ""},
             "collection": {
                 "heartbeat_interval_seconds": 30,
@@ -51,6 +51,13 @@ class SensorConfig:
                             self.data[k].update(v)
                         else:
                             self.data[k] = v
+
+            # Safe migration / cold-start guard:
+            # Ensure existing configurations with legacy short timeouts (<60s)
+            # are safely upgraded to at least 60s for cloud cold-start resilience.
+            current_timeout = self.data.get("server", {}).get("timeout_seconds", 0)
+            if not isinstance(current_timeout, (int, float)) or current_timeout < 60:
+                self.data["server"]["timeout_seconds"] = 60
 
     def save(self):
         with open(self.config_path, "w", encoding="utf-8") as f:

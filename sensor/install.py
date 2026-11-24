@@ -64,7 +64,8 @@ def print_windows_service_instructions(work_dir: str):
 async def enroll_cli(token: str, server_url: str):
     config = SensorConfig()
     config.data["server"]["url"] = server_url
-    client = SensorAPIClient(server_url=server_url)
+    timeout = float(config.data["server"].get("timeout_seconds", 60))
+    client = SensorAPIClient(server_url=server_url, timeout=timeout)
     print(f"Connecting to Sentinel SOC at {server_url} with enrollment token: [REDACTED_TOKEN]")
     res = await client.enroll(token)
     if res.get("success"):

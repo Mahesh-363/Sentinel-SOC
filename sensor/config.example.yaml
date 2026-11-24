@@ -4,7 +4,7 @@
 server:
   url: "http://localhost:8000"  # In production, use https://soc.yourdomain.com
   verify_ssl: true
-  timeout_seconds: 15
+  timeout_seconds: 60
 
 auth:
   # Provide enrollment_token for initial setup, or api_key once enrolled

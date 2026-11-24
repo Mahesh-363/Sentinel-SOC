@@ -45,7 +45,7 @@ class SentinelSensorService:
         self.client = SensorAPIClient(
             server_url=self.config.server_url,
             api_key=self.config.api_key,
-            timeout=self.config.data["server"]["timeout_seconds"]
+            timeout=float(self.config.data["server"].get("timeout_seconds", 60))
         )
         self.running = False
 

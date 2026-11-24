@@ -3,7 +3,7 @@ import httpx
 from typing import Dict, Any, List, Optional
 
 class SensorAPIClient:
-    def __init__(self, server_url: str, api_key: Optional[str] = None, timeout: float = 15.0):
+    def __init__(self, server_url: str, api_key: Optional[str] = None, timeout: float = 60.0):
         self.server_url = server_url.rstrip("/")
         self.api_key = api_key
         self.timeout = timeout

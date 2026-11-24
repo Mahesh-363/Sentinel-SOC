@@ -218,7 +218,7 @@ export default function IncidentsPage() {
   const handleExportTimelineCsv = () => {
     if (!selectedIncident) return;
     const token = localStorage.getItem("sentinel_token");
-    const orgId = localStorage.getItem("sentinel_org_id");
+    const orgId = localStorage.getItem("sentinel_active_org") || localStorage.getItem("sentinel_org_id");
     const url = `${process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1"}/incidents/${selectedIncident.id}/export/csv`;
     
     // Download using bearer auth fetch
