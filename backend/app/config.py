@@ -35,6 +35,49 @@ class Settings(BaseSettings):
                 )
         return v
     
+    # Initial Administrator Credentials (Bootstrap / First-Run Setup)
+    INITIAL_ADMIN_EMAIL: str = Field(
+        default="admin@sentinelsoc.com",
+        validation_alias=AliasChoices("INITIAL_ADMIN_EMAIL", "ADMIN_EMAIL")
+    )
+    INITIAL_ADMIN_PASSWORD: Optional[str] = Field(
+        default=None,
+        validation_alias=AliasChoices("INITIAL_ADMIN_PASSWORD", "ADMIN_PASSWORD")
+    )
+
+    @field_validator("INITIAL_ADMIN_PASSWORD")
+    @classmethod
+    def validate_production_admin_password(cls, v: Optional[str], info: ValidationInfo) -> Optional[str]:
+        env = (info.data.get("ENVIRONMENT") if hasattr(info, "data") else None) or os.getenv("ENVIRONMENT") or os.getenv("APP_ENV") or "development"
+        is_prod = str(env).lower() == "production"
+        if is_prod:
+            insecure_passwords = [
+                "sentineladmin123!",
+                "admin1234567890",
+                "password12345678",
+                "change-me-immediately",
+                "changeme12345678",
+                "sentinel_admin_password",
+                "sentineladmin123",
+            ]
+            if not v or not v.strip():
+                raise ValueError(
+                    "CRITICAL PRODUCTION SECURITY ERROR: INITIAL_ADMIN_PASSWORD must be explicitly provided in production. "
+                    "You must configure a strong password (minimum 16 characters) via the INITIAL_ADMIN_PASSWORD or ADMIN_PASSWORD environment variable."
+                )
+            v_clean = v.strip()
+            if len(v_clean) < 16 or v_clean.lower() in insecure_passwords:
+                raise ValueError(
+                    f"CRITICAL PRODUCTION SECURITY ERROR: INITIAL_ADMIN_PASSWORD is too weak (length {len(v_clean)} < 16 or matches known insecure defaults). "
+                    "Production administrator passwords must be at least 16 characters long."
+                )
+            return v_clean
+        else:
+            # Safe non-production fallback for local development / testing
+            if not v or not v.strip():
+                return "SentinelAdmin123!"
+            return v.strip()
+
     # Database: Supports SQLite (for zero-friction local/dev fallback) and PostgreSQL
     DATABASE_URL: str = Field(
         default="sqlite:///./sentinel.db",

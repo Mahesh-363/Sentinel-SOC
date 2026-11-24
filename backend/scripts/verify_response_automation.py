@@ -25,11 +25,14 @@ async def run_response_automation_verification():
     print("  [Integrity]: Full 9-Step Verification with Sensor Polling & Acknowledgement")
     print("=" * 80)
 
+    admin_email = os.getenv("ADMIN_EMAIL", "admin@sentinelsoc.com")
+    admin_password = os.getenv("ADMIN_PASSWORD", "SentinelAdmin123!")
+
     async with httpx.AsyncClient(timeout=10.0) as client:
         # Step 0: Authenticate
         login_res = await client.post(
             f"{BASE_URL}/api/v1/auth/login",
-            json={"email": "admin@sentinelsoc.com", "password": "SentinelAdmin123!"}
+            json={"email": admin_email, "password": admin_password}
         )
         if login_res.status_code != 200:
             print(f"[-] Authentication failed: {login_res.status_code}")

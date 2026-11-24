@@ -167,7 +167,7 @@ npm run dev
 - **Web Console:** [http://localhost:3000](http://localhost:3000)
 - **API Swagger Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
 - **Healthcheck:** [http://localhost:8000/health](http://localhost:8000/health)
-- **Default Admin Account:** `admin@sentinelsoc.com` (Password: `SentinelAdmin123!`)
+- **Local Development Admin Account:** `admin@sentinelsoc.com` (Default dev password: `SentinelAdmin123!` — mandatory rotation enforced on first login; in production, set `INITIAL_ADMIN_PASSWORD`)
 
 ---
 

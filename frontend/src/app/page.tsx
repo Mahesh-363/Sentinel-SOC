@@ -12,7 +12,11 @@ export default function HomePage() {
   useEffect(() => {
     if (!loading) {
       if (user) {
-        router.push("/dashboard");
+        if (user.must_change_password) {
+          router.push("/change-password");
+        } else {
+          router.push("/dashboard");
+        }
       } else {
         router.push("/login");
       }

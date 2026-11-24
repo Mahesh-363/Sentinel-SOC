@@ -10,7 +10,15 @@ from backend.app.config import settings
 from backend.app.core.security import hash_password, verify_password, create_access_token
 from backend.app.core.dependencies import get_current_user
 from backend.app.models.auth import User, Organization, OrganizationMembership, AuditLog
-from backend.app.schemas.auth import UserRegister, UserLogin, TokenResponse, UserOut, MembershipOut
+from backend.app.schemas.auth import (
+    UserRegister,
+    UserLogin,
+    TokenResponse,
+    UserOut,
+    MembershipOut,
+    PasswordChangeRequest,
+    PasswordChangeResponse,
+)
 
 email_validator = TypeAdapter(EmailStr)
 
@@ -89,6 +97,8 @@ def register(payload: UserRegister, db: Session = Depends(get_db)):
         user_id=user.id,
         email=user.email,
         full_name=user.full_name,
+        is_platform_admin=user.is_platform_admin,
+        must_change_password=user.must_change_password,
         organizations=[{"id": org.id, "name": org.name, "slug": org.slug, "role": "Organization Owner"}]
     )
 
@@ -176,6 +186,8 @@ async def login(request: Request, db: Session = Depends(get_db)):
         user_id=user.id,
         email=user.email,
         full_name=user.full_name,
+        is_platform_admin=user.is_platform_admin,
+        must_change_password=user.must_change_password,
         organizations=org_list
     )
 
@@ -183,6 +195,73 @@ async def login(request: Request, db: Session = Depends(get_db)):
 async def token_endpoint(request: Request, db: Session = Depends(get_db)):
     """OAuth2 password token alias for Swagger UI and OAuth2 clients."""
     return await login(request, db)
+
+@router.post(
+    "/change-password",
+    response_model=PasswordChangeResponse,
+    summary="Change User Password",
+    description="Authenticates current password and updates to a new high-entropy password, clearing the must_change_password flag."
+)
+def change_password(
+    payload: PasswordChangeRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if not payload.current_password or not payload.new_password:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Both current password and new password are required"
+        )
+
+    # 1. Verify current password
+    if not verify_password(payload.current_password, current_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Current password verification failed"
+        )
+
+    new_pass = payload.new_password.strip()
+    # 2. Enforce minimum length of 12 characters
+    if len(new_pass) < 12:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="New password must be at least 12 characters long"
+        )
+
+    # 3. Reject same password
+    if verify_password(new_pass, current_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="New password cannot be identical to the current password"
+        )
+
+    # 4. Update password and clear must_change_password flag
+    current_user.hashed_password = hash_password(new_pass)
+    current_user.must_change_password = False
+    current_user.updated_at = datetime.utcnow()
+
+    # 5. Audit log (never log passwords!)
+    audit = AuditLog(
+        organization_id=None,
+        user_id=current_user.id,
+        user_email=current_user.email,
+        action="USER_PASSWORD_CHANGED",
+        target_type="user",
+        target_id=current_user.id,
+        details="User password successfully updated and first-login requirement cleared"
+    )
+    db.add(audit)
+    db.commit()
+    db.refresh(current_user)
+
+    # 6. Issue fresh access token
+    new_token = create_access_token({"sub": current_user.id, "email": current_user.email})
+    return PasswordChangeResponse(
+        status="success",
+        message="Password changed successfully",
+        must_change_password=False,
+        access_token=new_token
+    )
 
 @router.get("/me", response_model=UserOut)
 def get_current_user_profile(user: User = Depends(get_current_user)):

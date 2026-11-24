@@ -44,6 +44,6 @@ npm run dev
 - Web UI: [http://localhost:3000](http://localhost:3000)
 - API Docs: [http://localhost:8000/docs](http://localhost:8000/docs)
 - Health Check: [http://localhost:8000/health](http://localhost:8000/health)
-- Default Credentials: `admin@sentinelsoc.com` / `SentinelAdmin123!`
+- Local Development Credentials: `admin@sentinelsoc.com` / `SentinelAdmin123!` *(Mandatory rotation enforced on first login. In production, configure `INITIAL_ADMIN_PASSWORD`)*
 
 For production PostgreSQL setup, Alembic migrations, Docker Compose, and sensor deployment, see [docs/INSTALLATION.md](docs/INSTALLATION.md).

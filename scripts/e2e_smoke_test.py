@@ -30,9 +30,11 @@ def run_smoke_test():
         print("✅ 1. System Healthcheck: OK")
 
         # 2. Authenticate Admin User
+        admin_email = os.getenv("ADMIN_EMAIL", "admin@sentinelsoc.com")
+        admin_password = os.getenv("ADMIN_PASSWORD", "SentinelAdmin123!")
         login_resp = client.post(
             "/api/v1/auth/login",
-            json={"email": "admin@sentinelsoc.com", "password": "SentinelAdmin123!"}
+            json={"email": admin_email, "password": admin_password}
         )
         assert login_resp.status_code == 200, f"Login failed: {login_resp.text}"
         token_data = login_resp.json()

@@ -18,6 +18,8 @@ class TokenResponse(BaseModel):
     user_id: str
     email: str
     full_name: str
+    is_platform_admin: bool = False
+    must_change_password: bool = False
     organizations: List[dict]
 
 class UserOut(BaseModel):
@@ -28,7 +30,18 @@ class UserOut(BaseModel):
     full_name: str
     is_active: bool
     is_platform_admin: bool
+    must_change_password: bool = False
     created_at: datetime
+
+class PasswordChangeRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+class PasswordChangeResponse(BaseModel):
+    status: str = "success"
+    message: str = "Password changed successfully"
+    must_change_password: bool = False
+    access_token: str
 
 class OrganizationCreate(BaseModel):
     name: str

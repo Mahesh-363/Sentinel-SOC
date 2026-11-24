@@ -10,8 +10,8 @@ import { ExplainErrorModal } from "../../components/ExplainErrorModal";
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const [email, setEmail] = useState("admin@sentinelsoc.com");
-  const [password, setPassword] = useState("SentinelAdmin123!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [explainOpen, setExplainOpen] = useState(false);

@@ -15,8 +15,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [explainModalOpen, setExplainModalOpen] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push("/login");
+    if (!loading) {
+      if (!user) {
+        router.push("/login");
+      } else if (user.must_change_password) {
+        router.push("/change-password");
+      }
     }
   }, [user, loading, router]);
 
@@ -43,7 +47,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) {
+  if (!user || user.must_change_password) {
     return null;
   }
 

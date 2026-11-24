@@ -83,6 +83,9 @@ async def run_pipeline_verification():
     discovered_devs = discover_local_devices()
     print(f"  [+] LAN Neighbors Discovered via ARP: {len(discovered_devs)}")
 
+    admin_email = os.getenv("ADMIN_EMAIL", "admin@sentinelsoc.com")
+    admin_password = os.getenv("ADMIN_PASSWORD", "SentinelAdmin123!")
+
     # -------------------------------------------------------------------------
     # STEP 2: Authenticate Admin & Establish Isolated Test Tenant Context
     # -------------------------------------------------------------------------
@@ -90,7 +93,7 @@ async def run_pipeline_verification():
     async with httpx.AsyncClient(timeout=10.0) as client:
         login_res = await client.post(
             f"{BASE_URL}/api/v1/auth/login",
-            json={"email": "admin@sentinelsoc.com", "password": "SentinelAdmin123!"}
+            json={"email": admin_email, "password": admin_password}
         )
         if login_res.status_code != 200:
             print(f"[-] Login failed: {login_res.status_code} - {login_res.text}")

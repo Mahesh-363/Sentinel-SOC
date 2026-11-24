@@ -41,6 +41,13 @@ def ensure_schema_migrations():
                 if cols_sensors and "pending_commands" not in cols_sensors:
                     conn.execute(text("ALTER TABLE sensors ADD COLUMN pending_commands TEXT NULL"))
                     conn.commit()
+
+                # Users table migration for must_change_password
+                res_users = conn.execute(text("PRAGMA table_info(users)"))
+                cols_users = [row[1] for row in res_users.fetchall()]
+                if cols_users and "must_change_password" not in cols_users:
+                    conn.execute(text("ALTER TABLE users ADD COLUMN must_change_password BOOLEAN DEFAULT 0 NOT NULL"))
+                    conn.commit()
     except Exception as e:
         print(f"Schema migration check note: {e}")
 
@@ -49,10 +56,13 @@ def seed_database():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
+        admin_email = settings.INITIAL_ADMIN_EMAIL.lower().strip()
+        admin_password = settings.INITIAL_ADMIN_PASSWORD
+
         # Check if already seeded
-        existing_user = db.query(User).filter(User.email == "admin@sentinelsoc.com").first()
+        existing_user = db.query(User).filter(User.email == admin_email).first()
         if existing_user:
-            print("Database already contains seed user. Ensuring detection rules...")
+            print(f"Database already contains seed user ({admin_email}). Ensuring detection rules...")
             seed_default_detection_rules(db)
             return
 
@@ -61,11 +71,12 @@ def seed_database():
 
         # 1. Create Default Admin User
         admin_user = User(
-            email="admin@sentinelsoc.com",
-            hashed_password=hash_password("SentinelAdmin123!"),
+            email=admin_email,
+            hashed_password=hash_password(admin_password),
             full_name="Chief Information Security Officer",
             is_active=True,
-            is_platform_admin=True
+            is_platform_admin=True,
+            must_change_password=True
         )
         db.add(admin_user)
         db.flush()

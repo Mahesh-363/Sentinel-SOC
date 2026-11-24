@@ -143,9 +143,9 @@ This mode runs directly on your workstation or server using SQLite and requires 
    ```bash
    python -m backend.app.db.seed
    ```
-   *Default Admin Credentials:*
+   *Local Development Admin Credentials:*
    - **Email:** `admin@sentinelsoc.com`
-   - **Password:** `SentinelAdmin123!`
+   - **Password:** `SentinelAdmin123!` *(Mandatory rotation enforced on first login. In production, configure `INITIAL_ADMIN_PASSWORD`)*
    - **Organization:** Global Defense SOC
 
    *(If you ever need to reset the administrator password, run: `python scripts/reset_admin_password.py`)*
