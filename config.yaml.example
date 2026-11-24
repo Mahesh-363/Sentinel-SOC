@@ -1,0 +1,36 @@
+# ==============================================================================
+# SENTINEL SOC — Root Sensor Configuration Template (config.yaml.example)
+# ==============================================================================
+# Copy this file to config.yaml when running the sensor from the project root.
+# For initial enrollment, provide the enrollment token generated from the SOC UI.
+# After successful enrollment, the sensor daemon automatically writes the api_key.
+# ==============================================================================
+
+server:
+  url: "http://127.0.0.1:8000"
+  verify_ssl: true
+  timeout_seconds: 15
+
+auth:
+  enrollment_token: ""
+  sensor_id: ""
+  api_key: ""
+
+collection:
+  heartbeat_interval_seconds: 30
+  telemetry_interval_seconds: 60
+  enable_device_discovery: true
+  enable_security_logs: true
+  enable_connection_monitoring: true
+  max_connections_sample: 50
+
+buffer:
+  db_path: "sentinel_sensor_buffer.db"
+  max_buffered_events: 10000
+  batch_size: 50
+
+logging:
+  level: "INFO"
+  file_path: "sentinel_sensor.log"
+  max_bytes: 5242880
+  backup_count: 3

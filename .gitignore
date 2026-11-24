@@ -1,0 +1,128 @@
+# ==============================================================================
+# SENTINEL SOC — Root .gitignore
+# ==============================================================================
+
+# Python Bytecode and Compilation Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+frontend/venv/
+.venv*/
+venv*/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+htmlcov/
+
+# Local SQLite Databases, Buffer Queues, and Backups
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+sentinel.db
+sentinel.db*
+sentinel.db.bak*
+sentinel_sensor_buffer.db
+sentinel_sensor_buffer.db*
+
+# Application & Sensor Runtime Logs
+logs/
+*.log
+sentinel_sensor.log
+sentinel_sensor.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Active Endpoint Sensor Configuration (Contains live enrolled API keys)
+config.yaml
+sensor/config.yaml
+!config.yaml.example
+!sensor/config.example.yaml
+
+# Environment Variables & Private Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Node.js & Next.js Frontend
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/
+out/
+frontend/out/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+frontend/.vercel
+.vercel
+
+# Playwright & Frontend Test Artifacts
+frontend/test-results/
+frontend/playwright-report/
+test-results/
+playwright-report/
+
+# TypeScript Build Artifacts
+*.tsbuildinfo
+frontend/*.tsbuildinfo
+next-env.d.ts
+frontend/next-env.d.ts
+
+# Operating System & IDE Artifacts
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~

@@ -1,0 +1,52 @@
+from datetime import datetime
+from typing import Optional, List
+from pydantic import BaseModel, EmailStr, ConfigDict
+
+class UserRegister(BaseModel):
+    email: EmailStr
+    password: str
+    full_name: str
+    organization_name: Optional[str] = "Primary Security Operations"
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user_id: str
+    email: str
+    full_name: str
+    organizations: List[dict]
+
+class UserOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    email: str
+    full_name: str
+    is_active: bool
+    is_platform_admin: bool
+    created_at: datetime
+
+class OrganizationCreate(BaseModel):
+    name: str
+
+class OrganizationOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    name: str
+    slug: str
+    is_active: bool
+    created_at: datetime
+
+class MembershipOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    organization_id: str
+    organization_name: str
+    role: str
