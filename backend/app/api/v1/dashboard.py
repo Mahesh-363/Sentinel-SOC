@@ -6,6 +6,7 @@ from sqlalchemy import func
 
 from backend.app.database import get_db
 from backend.app.config import settings
+from backend.app.core.datetime_utils import serialize_utc_datetime
 from backend.app.core.dependencies import get_current_org
 from backend.app.core.ai.provider import get_ai_provider
 from backend.app.models.auth import Organization
@@ -131,7 +132,7 @@ def get_dashboard_stats(
             "ip": d.related_ip,
             "severity": d.severity,
             "rule": d.rule_name,
-            "timestamp": d.timestamp.isoformat(),
+            "timestamp": serialize_utc_datetime(d.timestamp),
             "is_simulated": d.is_simulated
         })
 
@@ -149,7 +150,7 @@ def get_dashboard_stats(
             "severity": e.severity,
             "source_ip": e.source_ip,
             "destination_ip": e.destination_ip,
-            "timestamp": e.timestamp.isoformat(),
+            "timestamp": serialize_utc_datetime(e.timestamp),
             "is_simulated": e.is_simulated
         })
 

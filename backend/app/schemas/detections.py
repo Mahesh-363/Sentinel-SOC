@@ -1,6 +1,6 @@
-from datetime import datetime
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, ConfigDict
+from backend.app.core.datetime_utils import UTCDatetime
 
 class DetectionRuleOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -18,8 +18,8 @@ class DetectionRuleOut(BaseModel):
     correlation_pattern: Optional[str] = None
     threshold: int = 5
     parameters_json: Optional[str] = None
-    created_at: datetime
-    updated_at: datetime
+    created_at: UTCDatetime
+    updated_at: UTCDatetime
 
 class RuleParametersUpdate(BaseModel):
     threshold: Optional[int] = None
@@ -43,8 +43,8 @@ class DetectionResultOut(BaseModel):
     related_ip: Optional[str] = None
     is_simulated: bool
     status: str
-    timestamp: datetime
-    created_at: datetime
+    timestamp: UTCDatetime
+    created_at: UTCDatetime
 
 class CorrelatedEventGroupOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -56,11 +56,11 @@ class CorrelatedEventGroupOut(BaseModel):
     description: str
     severity: str
     confidence: int
-    time_window_start: datetime
-    time_window_end: datetime
+    time_window_start: UTCDatetime
+    time_window_end: UTCDatetime
     event_ids: List[str] = []
     asset_ids: List[str] = []
     ip_addresses: List[str] = []
     explanation: str
     status: str
-    created_at: datetime
+    created_at: UTCDatetime

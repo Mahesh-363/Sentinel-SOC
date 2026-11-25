@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { AppShell } from "../../components/layout/AppShell";
 import { fetchApi } from "../../lib/api";
+import { formatLocalTime } from "../../lib/date";
 import {
   Cpu,
   Key,
@@ -184,7 +185,7 @@ export default function SensorsPage() {
                         </div>
                       </td>
                       <td className="py-3 px-4 font-mono text-[11px] text-slate-400">
-                        {sensor.last_heartbeat ? new Date(sensor.last_heartbeat).toLocaleTimeString() : "Never"}
+                        {formatLocalTime(sensor.last_heartbeat)}
                       </td>
                       <td className="py-3 px-4 text-right">
                         {sensor.status !== "Revoked" && (

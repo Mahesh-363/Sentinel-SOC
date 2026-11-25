@@ -1,6 +1,6 @@
-from datetime import datetime
 from typing import Optional, List
 from pydantic import BaseModel, EmailStr, ConfigDict
+from backend.app.core.datetime_utils import UTCDatetime
 
 class UserRegister(BaseModel):
     email: EmailStr
@@ -31,7 +31,7 @@ class UserOut(BaseModel):
     is_active: bool
     is_platform_admin: bool
     must_change_password: bool = False
-    created_at: datetime
+    created_at: UTCDatetime
 
 class PasswordChangeRequest(BaseModel):
     current_password: str
@@ -53,7 +53,21 @@ class OrganizationOut(BaseModel):
     name: str
     slug: str
     is_active: bool
-    created_at: datetime
+    created_at: UTCDatetime
+
+class AuditLogOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    organization_id: Optional[str] = None
+    user_id: Optional[str] = None
+    user_email: Optional[str] = None
+    action: str
+    target_type: str
+    target_id: Optional[str] = None
+    details: Optional[str] = None
+    ip_address: Optional[str] = None
+    created_at: UTCDatetime
 
 class MembershipOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)

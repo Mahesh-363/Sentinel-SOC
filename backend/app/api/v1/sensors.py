@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from backend.app.database import get_db
 from backend.app.config import settings
+from backend.app.core.datetime_utils import serialize_utc_datetime
 from backend.app.core.security import generate_enrollment_token, generate_sensor_api_key, hash_token
 from backend.app.core.dependencies import get_current_org, require_role, get_sensor_by_key
 from backend.app.core.detection_engine import run_detection_pipeline_for_event
@@ -258,7 +259,7 @@ def sensor_heartbeat(
                 action="COMMAND_EXPIRED",
                 target_type="SensorCommand",
                 target_id=c.id,
-                details=f"Command '{c.action}' (ID: {c.id}) expired before retrieval (TTL: {c.expires_at.isoformat()})."
+                details=f"Command '{c.action}' (ID: {c.id}) expired before retrieval (TTL: {serialize_utc_datetime(c.expires_at)})."
             )
             db.add(audit)
         else:
@@ -268,8 +269,8 @@ def sensor_heartbeat(
                 "id": c.id,
                 "action": c.action,
                 "params": json.loads(c.parameters_json or "{}"),
-                "queued_at": c.queued_at.isoformat(),
-                "expires_at": c.expires_at.isoformat() if c.expires_at else None
+                "queued_at": serialize_utc_datetime(c.queued_at),
+                "expires_at": serialize_utc_datetime(c.expires_at)
             })
             audit = AuditLog(
                 organization_id=sensor.organization_id,
@@ -309,7 +310,7 @@ def sensor_heartbeat(
     db.commit()
     return {
         "status": "acknowledged",
-        "timestamp": now.isoformat(),
+        "timestamp": serialize_utc_datetime(now),
         "dispatched_commands": commands_to_dispatch
     }
 
@@ -431,7 +432,7 @@ def acknowledge_sensor_command(
         "command_id": payload.command_id,
         "action": payload.action,
         "ack_status": payload.status,
-        "timestamp": now.isoformat()
+        "timestamp": serialize_utc_datetime(now)
     }
 
 @router.post("/telemetry")

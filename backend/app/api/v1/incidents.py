@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
 
 from backend.app.database import get_db
+from backend.app.core.datetime_utils import serialize_utc_datetime
 from backend.app.core.dependencies import get_current_org, get_current_user, require_role
 from backend.app.models.auth import Organization, User
 from backend.app.models.incidents import Incident, IncidentEvent, IncidentComment, IncidentTimelineEntry
@@ -276,7 +277,7 @@ def export_incident_timeline_csv(
     
     for e in entries:
         writer.writerow([
-            e.timestamp.isoformat(),
+            serialize_utc_datetime(e.timestamp),
             e.entry_type,
             e.actor_type,
             e.actor_name or "N/A",

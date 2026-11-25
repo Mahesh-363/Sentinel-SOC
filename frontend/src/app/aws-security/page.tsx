@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { AppShell } from "../../components/layout/AppShell";
 import { fetchApi } from "../../lib/api";
+import { formatLocalDateTime } from "../../lib/date";
 import {
   Cloud,
   ShieldCheck,
@@ -343,7 +344,7 @@ export default function AwsSecurityPage() {
                             )}
                           </td>
                           <td className="py-3 px-4 font-mono text-[11px] text-slate-500 whitespace-nowrap">
-                            {new Date(f.created_at).toLocaleString()}
+                            {formatLocalDateTime(f.created_at)}
                           </td>
                         </tr>
                       ))
@@ -396,7 +397,7 @@ export default function AwsSecurityPage() {
                           </span>
                         </td>
                         <td className="py-3 px-4 font-mono text-slate-500 text-[11px]">
-                          {new Date(r.last_scanned_at).toLocaleString()}
+                          {formatLocalDateTime(r.last_scanned_at)}
                         </td>
                       </tr>
                     ))
@@ -432,7 +433,7 @@ export default function AwsSecurityPage() {
                   <div className="space-y-1.5 text-slate-400 text-[11px]">
                     <div>AssumeRole ARN: <span className="font-mono text-slate-200">{acc.role_arn}</span></div>
                     <div>Region: <span className="text-slate-300">{acc.region}</span></div>
-                    <div>Connected: <span className="text-slate-300">{new Date(acc.created_at).toLocaleString()}</span></div>
+                    <div>Connected: <span className="text-slate-300">{formatLocalDateTime(acc.created_at)}</span></div>
                   </div>
 
                   <div className="pt-3 border-t border-slate-800 flex justify-end">

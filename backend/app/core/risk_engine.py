@@ -3,6 +3,7 @@ from typing import Dict, Any, Tuple
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
+from backend.app.core.datetime_utils import serialize_utc_datetime
 from backend.app.models.assets import Asset
 from backend.app.models.detections import DetectionResult
 from backend.app.models.events import SecurityEvent
@@ -105,7 +106,7 @@ def calculate_asset_risk_score(db: Session, asset: Asset) -> Tuple[int, str, Dic
         "score": final_score,
         "level": level,
         "factors": factors or ["Nominal operational baseline"],
-        "calculated_at": now.isoformat()
+        "calculated_at": serialize_utc_datetime(now)
     }
 
     return final_score, level, breakdown

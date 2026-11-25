@@ -1,6 +1,6 @@
-from datetime import datetime
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, ConfigDict
+from backend.app.core.datetime_utils import UTCDatetime
 
 class AssetCreate(BaseModel):
     hostname: str
@@ -31,8 +31,8 @@ class AssetOut(BaseModel):
     health_status: str
     risk_level: str
     risk_score: int = 15
-    last_seen: datetime
-    created_at: datetime
+    last_seen: UTCDatetime
+    created_at: UTCDatetime
 
 class SensorGenerateTokenRequest(BaseModel):
     name: str
@@ -73,7 +73,7 @@ class SensorOut(BaseModel):
     status: str
     capabilities: Optional[str]
     error_message: Optional[str]
-    last_heartbeat: Optional[datetime]
-    created_at: datetime
+    last_heartbeat: Optional[UTCDatetime]
+    created_at: UTCDatetime
     enrollment_token: Optional[str] = None
-    token_expires_at: Optional[datetime] = None
+    token_expires_at: Optional[UTCDatetime] = None

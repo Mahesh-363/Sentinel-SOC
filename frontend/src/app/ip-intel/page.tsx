@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { AppShell } from "../../components/layout/AppShell";
 import { fetchApi } from "../../lib/api";
+import { formatLocalDateTime } from "../../lib/date";
 import {
   Globe,
   Search,
@@ -603,7 +604,7 @@ export default function IpIntelPage() {
                       <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition-colors">
                         <div className="flex items-center justify-between text-[11px] mb-1">
                           <span className="font-semibold text-slate-200">{item.event}</span>
-                          <span className="text-slate-400 font-mono">{new Date(item.timestamp).toLocaleString()}</span>
+                          <span className="text-slate-400 font-mono">{formatLocalDateTime(item.timestamp)}</span>
                         </div>
                         <p className="text-slate-400 text-[11px] leading-relaxed">{item.details}</p>
                       </div>
@@ -651,7 +652,7 @@ export default function IpIntelPage() {
                           <td className="py-2.5 text-slate-400">{obs.protocol}</td>
                           <td className="py-2.5 text-slate-400">{obs.source}</td>
                           <td className="py-2.5 text-slate-400 text-right font-mono">
-                            {new Date(obs.timestamp).toLocaleString()}
+                            {formatLocalDateTime(obs.timestamp)}
                           </td>
                         </tr>
                       ))}

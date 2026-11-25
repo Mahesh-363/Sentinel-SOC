@@ -1,6 +1,6 @@
-from datetime import datetime
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, ConfigDict
+from backend.app.core.datetime_utils import UTCDatetime
 
 class NormalizedIndicatorOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -10,11 +10,11 @@ class NormalizedIndicatorOut(BaseModel):
     provider: str
     reputation: str = "Unknown"   # Benign, Suspicious, Malicious, Unknown
     confidence: Optional[int] = 0
-    first_seen: Optional[datetime] = None
-    last_seen: Optional[datetime] = None
+    first_seen: Optional[UTCDatetime] = None
+    last_seen: Optional[UTCDatetime] = None
     reference: Optional[str] = None
-    source_timestamp: Optional[datetime] = None
-    expires_at: Optional[datetime] = None
+    source_timestamp: Optional[UTCDatetime] = None
+    expires_at: Optional[UTCDatetime] = None
     attribution: str = ""
     status: str = "CONFIGURED"    # CONFIGURED, NOT CONFIGURED, SUCCESS, RATE_LIMITED, ERROR
     raw_details: Optional[Dict[str, Any]] = None
@@ -27,7 +27,7 @@ class ThreatProviderStatusOut(BaseModel):
     api_endpoint: Optional[str] = None
     requests_today: int = 0
     daily_limit: int = 1000
-    last_sync_at: Optional[datetime] = None
+    last_sync_at: Optional[UTCDatetime] = None
     last_error: Optional[str] = None
     attribution: Optional[str] = None
 
@@ -59,5 +59,5 @@ class IPInvestigationOut(BaseModel):
     notes: Optional[str] = None
     tags: List[str] = []
     timeline: List[Dict[str, Any]] = []
-    created_at: datetime
-    updated_at: datetime
+    created_at: UTCDatetime
+    updated_at: UTCDatetime

@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from backend.app.database import get_db
 from backend.app.config import settings
+from backend.app.core.datetime_utils import serialize_utc_datetime
 from backend.app.core.dependencies import get_current_org, require_role
 from backend.app.models.auth import Organization
 from backend.app.models.aws import AWSAccount, AWSFinding, AWSResource
@@ -283,7 +284,7 @@ def load_all_aws_fixtures(
             resource_id=f["resource_id"],
             description=f["description"],
             remediation_guidance=f["remediation_guidance"],
-            raw_finding_json=json.dumps({"fixture": True, "created": now.isoformat()}),
+            raw_finding_json=json.dumps({"fixture": True, "created": serialize_utc_datetime(now)}),
             is_simulated=True,
             created_at=now
         )

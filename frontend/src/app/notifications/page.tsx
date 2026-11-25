@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { AppShell } from "../../components/layout/AppShell";
 import { fetchApi } from "../../lib/api";
+import { formatLocalDateTime } from "../../lib/date";
 import { Bell, Check, CheckCheck, RefreshCw, AlertTriangle, ShieldAlert, AlertOctagon } from "lucide-react";
 
 export default function NotificationsPage() {
@@ -105,7 +106,7 @@ export default function NotificationsPage() {
                     </div>
                     <p className="text-xs text-slate-400 mt-1 leading-relaxed">{n.message}</p>
                     <div className="text-[10px] text-slate-500 font-mono mt-2">
-                      {new Date(n.created_at).toLocaleString()}
+                      {formatLocalDateTime(n.created_at)}
                     </div>
                   </div>
                 </div>

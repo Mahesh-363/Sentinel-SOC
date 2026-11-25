@@ -1,6 +1,6 @@
-from datetime import datetime
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, ConfigDict
+from backend.app.core.datetime_utils import UTCDatetime
 
 class IncidentCreate(BaseModel):
     title: str
@@ -31,7 +31,7 @@ class IncidentCommentOut(BaseModel):
     user_name: Optional[str] = None
     comment: str
     is_ai_generated: bool
-    created_at: datetime
+    created_at: UTCDatetime
 
 class IncidentTimelineEntryCreate(BaseModel):
     entry_type: str  # INVESTIGATION_NOTE, STATUS_CHANGE, ANALYST_ACTION, COMMENT_ADDED
@@ -53,7 +53,7 @@ class IncidentTimelineEntryOut(BaseModel):
     actor_name: Optional[str] = None
     metadata_json: Optional[str] = None
     is_ai_generated: bool
-    timestamp: datetime
+    timestamp: UTCDatetime
 
 class IncidentOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -69,8 +69,8 @@ class IncidentOut(BaseModel):
     related_ip_addresses_json: Optional[str] = None
     resolution_notes: Optional[str] = None
     is_simulated: bool = False
-    created_at: datetime
-    updated_at: datetime
-    closed_at: Optional[datetime] = None
+    created_at: UTCDatetime
+    updated_at: UTCDatetime
+    closed_at: Optional[UTCDatetime] = None
     comments: List[IncidentCommentOut] = []
     timeline_entries: List[IncidentTimelineEntryOut] = []

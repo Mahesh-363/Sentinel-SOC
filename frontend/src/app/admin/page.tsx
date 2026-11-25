@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { AppShell } from "../../components/layout/AppShell";
 import { fetchApi } from "../../lib/api";
+import { formatLocalDateTime } from "../../lib/date";
 import {
   Settings,
   Shield,
@@ -322,7 +323,7 @@ export default function AdminPage() {
                       <p className="text-slate-300 text-[11px] mt-1">{log.details}</p>
                     </div>
                     <span className="text-slate-500 text-[10px] font-mono shrink-0">
-                      {new Date(log.created_at).toLocaleString()}
+                      {formatLocalDateTime(log.created_at)}
                     </span>
                   </div>
                 ))

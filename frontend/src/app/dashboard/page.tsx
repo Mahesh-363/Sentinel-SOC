@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { AppShell } from "../../components/layout/AppShell";
 import { fetchApi } from "../../lib/api";
+import { formatLocalTime } from "../../lib/date";
 import {
   ShieldAlert,
   Server,
@@ -359,7 +360,7 @@ export default function DashboardPage() {
                         {ev.severity}
                       </span>
                       <div className="text-[10px] text-slate-500 mt-0.5">
-                        {new Date(ev.timestamp).toLocaleTimeString()}
+                        {formatLocalTime(ev.timestamp)}
                       </div>
                     </div>
                   </div>

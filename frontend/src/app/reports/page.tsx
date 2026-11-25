@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { AppShell } from "../../components/layout/AppShell";
 import { fetchApi } from "../../lib/api";
+import { formatLocalDateTime } from "../../lib/date";
 import {
   FileText,
   Download,
@@ -141,7 +142,7 @@ export default function ReportsPage() {
           {summary?.generated_at && (
             <div className="text-xs text-slate-500 font-mono flex items-center gap-1.5 self-start sm:self-auto bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-lg">
               <Calendar className="w-3.5 h-3.5 text-slate-400" />
-              <span>Synced: {new Date(summary.generated_at).toLocaleString()}</span>
+              <span>Synced: {formatLocalDateTime(summary.generated_at)}</span>
             </div>
           )}
         </div>

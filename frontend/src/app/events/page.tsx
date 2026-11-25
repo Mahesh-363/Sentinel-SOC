@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { AppShell } from "../../components/layout/AppShell";
 import { fetchApi } from "../../lib/api";
+import { formatLocalDateTime } from "../../lib/date";
 import {
   Activity,
   Search,
@@ -150,7 +151,7 @@ export default function EventsPage() {
                           </button>
                         </td>
                         <td className="py-3 px-4 font-mono text-[11px] text-slate-400 whitespace-nowrap">
-                          {new Date(ev.timestamp).toLocaleString()}
+                          {formatLocalDateTime(ev.timestamp)}
                         </td>
                         <td className="py-3 px-4">
                           <div className="font-semibold text-slate-200">{ev.title}</div>

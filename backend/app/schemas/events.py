@@ -1,6 +1,6 @@
-from datetime import datetime
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, ConfigDict
+from backend.app.core.datetime_utils import UTCDatetime
 
 class SecurityEventCreate(BaseModel):
     asset_id: Optional[str] = None
@@ -33,8 +33,8 @@ class SecurityEventOut(BaseModel):
     destination_port: Optional[int]
     protocol: Optional[str]
     is_simulated: bool
-    timestamp: datetime
-    created_at: datetime
+    timestamp: UTCDatetime
+    created_at: UTCDatetime
 
 class ThreatIndicatorCreate(BaseModel):
     indicator_type: str  # IPv4, IPv6, Domain, Hash
@@ -56,4 +56,4 @@ class ThreatIndicatorOut(BaseModel):
     source: str
     description: Optional[str]
     confidence: int
-    created_at: datetime
+    created_at: UTCDatetime

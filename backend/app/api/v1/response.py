@@ -7,11 +7,13 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from backend.app.database import get_db
+from backend.app.core.datetime_utils import serialize_utc_datetime
 from backend.app.core.dependencies import get_current_org, get_current_user, require_role
 from backend.app.models.auth import Organization, User, AuditLog
 from backend.app.models.response import ResponsePlaybook, ResponseExecution, SensorCommand
 from backend.app.models.assets import Asset, Sensor
 from backend.app.models.incidents import Incident, IncidentTimelineEntry
+from backend.app.schemas.response import ResponsePlaybookOut, ResponseExecutionOut
 
 router = APIRouter(prefix="/response", tags=["Response Automation"])
 
@@ -83,16 +85,16 @@ def seed_default_playbooks(db: Session, org_id: str):
             db.add(new_pb)
     db.commit()
 
-@router.get("/playbooks")
+@router.get("/playbooks", response_model=List[ResponsePlaybookOut])
 def list_playbooks(org: Organization = Depends(get_current_org), db: Session = Depends(get_db)):
     seed_default_playbooks(db, org.id)
     return db.query(ResponsePlaybook).filter(ResponsePlaybook.organization_id == org.id).all()
 
-@router.get("/executions")
+@router.get("/executions", response_model=List[ResponseExecutionOut])
 def list_executions(org: Organization = Depends(get_current_org), db: Session = Depends(get_db)):
     return db.query(ResponseExecution).filter(ResponseExecution.organization_id == org.id).order_by(ResponseExecution.created_at.desc()).all()
 
-@router.post("/trigger", dependencies=[Depends(require_role(["Organization Owner", "Organization Administrator", "Security Analyst"]))])
+@router.post("/trigger", response_model=ResponseExecutionOut, dependencies=[Depends(require_role(["Organization Owner", "Organization Administrator", "Security Analyst"]))])
 def trigger_playbook(
     payload: TriggerPlaybookRequest,
     user: User = Depends(get_current_user),
@@ -156,7 +158,7 @@ def trigger_playbook(
     db.refresh(execution)
     return execution
 
-@router.post("/executions/{execution_id}/decision", dependencies=[Depends(require_role(["Organization Owner", "Organization Administrator"]))])
+@router.post("/executions/{execution_id}/decision", response_model=ResponseExecutionOut, dependencies=[Depends(require_role(["Organization Owner", "Organization Administrator"]))])
 def approve_or_reject_execution(
     execution_id: str,
     payload: ApproveExecutionRequest,
@@ -228,7 +230,7 @@ def approve_or_reject_execution(
                     "id": cmd_id,
                     "action": "ISOLATE_HOST",
                     "params": {"allow_backend_only": True},
-                    "queued_at": now.isoformat()
+                    "queued_at": serialize_utc_datetime(now)
                 })
                 sensor.pending_commands = json.dumps(cmds)
                 log_notes.append(f"Network isolation command queued for Sensor '{sensor.name}' (ID: {sensor.id}).")
@@ -288,7 +290,7 @@ def approve_or_reject_execution(
                     "id": cmd_id,
                     "action": "DIAGNOSTIC_PROBE",
                     "params": {"dry_run": True, "message": "Non-destructive verification probe"},
-                    "queued_at": now.isoformat()
+                    "queued_at": serialize_utc_datetime(now)
                 })
                 sensor.pending_commands = json.dumps(cmds)
                 log_notes.append(f"Safe diagnostic probe command queued for Sensor '{sensor.name}' (ID: {sensor.id}).")

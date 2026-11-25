@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { AppShell } from "../../components/layout/AppShell";
 import { fetchApi } from "../../lib/api";
+import { formatLocalDateTime } from "../../lib/date";
 import { Server, Plus, Search, Shield, RefreshCw, Laptop, Database, Cpu } from "lucide-react";
 
 export default function AssetsPage() {
@@ -173,7 +174,7 @@ export default function AssetsPage() {
                         </div>
                       </td>
                       <td className="py-3 px-4 text-slate-400 font-mono text-[11px]">
-                        {new Date(asset.last_seen).toLocaleString()}
+                        {formatLocalDateTime(asset.last_seen)}
                       </td>
                     </tr>
                   );

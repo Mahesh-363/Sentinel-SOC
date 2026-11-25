@@ -1,6 +1,6 @@
-from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict
+from backend.app.core.datetime_utils import UTCDatetime
 
 class NotificationOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -13,6 +13,6 @@ class NotificationOut(BaseModel):
     severity: str
     notification_type: str
     is_read: bool
-    read_at: Optional[datetime]
+    read_at: Optional[UTCDatetime]
     link_url: Optional[str]
-    created_at: datetime
+    created_at: UTCDatetime

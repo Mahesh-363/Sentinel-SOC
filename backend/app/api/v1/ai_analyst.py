@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from backend.app.database import get_db
+from backend.app.core.datetime_utils import serialize_utc_datetime
 from backend.app.core.dependencies import get_current_org, get_current_user
 from backend.app.core.ai.analyst import run_security_analysis
 from backend.app.models.auth import Organization, User
@@ -42,7 +43,7 @@ async def investigate_with_ai(
             "evidence": alert.evidence_json,
             "related_ip": alert.related_ip,
             "confidence": alert.confidence,
-            "timestamp": alert.timestamp.isoformat()
+            "timestamp": serialize_utc_datetime(alert.timestamp)
         }
         evidence_sources.append(f"Alert ID: {alert.id}")
         is_simulated = alert.is_simulated
@@ -61,7 +62,7 @@ async def investigate_with_ai(
             "status": inc.status,
             "related_assets": inc.related_asset_ids_json,
             "related_ips": inc.related_ip_addresses_json,
-            "created_at": inc.created_at.isoformat()
+            "created_at": serialize_utc_datetime(inc.created_at)
         }
         evidence_sources.append(f"Incident ID: {inc.id}")
 
@@ -88,7 +89,7 @@ async def investigate_with_ai(
             "os_family": asset.os_family,
             "health_status": asset.health_status,
             "risk_level": asset.risk_level,
-            "last_seen": asset.last_seen.isoformat()
+            "last_seen": serialize_utc_datetime(asset.last_seen)
         }
         evidence_sources.append(f"Asset ID: {asset.id}")
     else:

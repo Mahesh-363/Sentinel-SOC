@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { AppShell } from "../../components/layout/AppShell";
 import { fetchApi } from "../../lib/api";
+import { formatLocalDateTime } from "../../lib/date";
 import {
   Network,
   Plus,
@@ -353,7 +354,7 @@ export default function NetworkPage() {
                             )}
                           </td>
                           <td className="py-3 px-4 text-slate-400 font-mono text-[11px]">
-                            {new Date(dev.last_seen).toLocaleString()}
+                            {formatLocalDateTime(dev.last_seen)}
                           </td>
                           <td className="py-3 px-4 text-right">
                             <button
@@ -548,7 +549,7 @@ export default function NetworkPage() {
 
                   <div className="space-y-1.5 text-slate-400 text-[11px]">
                     <div>Target Host: <span className="font-mono text-slate-200">{integ.target_host}:{integ.port}</span></div>
-                    <div>Last Synchronized: <span className="text-slate-300">{integ.last_sync_at ? new Date(integ.last_sync_at).toLocaleString() : "Never"}</span></div>
+                    <div>Last Synchronized: <span className="text-slate-300">{formatLocalDateTime(integ.last_sync_at)}</span></div>
                   </div>
 
                   <div className="pt-3 border-t border-slate-800 flex items-center justify-between">

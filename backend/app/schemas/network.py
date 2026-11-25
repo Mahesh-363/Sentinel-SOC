@@ -1,6 +1,6 @@
-from datetime import datetime
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, ConfigDict
+from backend.app.core.datetime_utils import UTCDatetime
 from backend.app.schemas.threat_intel import IPInvestigationOut
 
 class NetworkCreate(BaseModel):
@@ -19,7 +19,7 @@ class NetworkOut(BaseModel):
     network_type: str
     observation_source: str
     is_authorized: bool
-    created_at: datetime
+    created_at: UTCDatetime
 
 class NetworkDeviceOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -38,8 +38,8 @@ class NetworkDeviceOut(BaseModel):
     device_type: str = "Workstation"
     discovery_method: str = "ARP"
     is_authorized: bool = True
-    first_seen: datetime
-    last_seen: datetime
+    first_seen: UTCDatetime
+    last_seen: UTCDatetime
 
 class NetworkIntegrationCreate(BaseModel):
     name: str
@@ -56,9 +56,9 @@ class NetworkIntegrationOut(BaseModel):
     integration_type: str
     endpoint_url: Optional[str] = None
     status: str
-    last_sync_at: Optional[datetime] = None
+    last_sync_at: Optional[UTCDatetime] = None
     last_error: Optional[str] = None
-    created_at: datetime
+    created_at: UTCDatetime
 
 class NetworkTopologyNode(BaseModel):
     id: str

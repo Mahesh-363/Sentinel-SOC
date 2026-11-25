@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { AppShell } from "../../components/layout/AppShell";
 import { fetchApi } from "../../lib/api";
+import { formatLocalDateTime, formatLocalTime } from "../../lib/date";
 import {
   ShieldAlert,
   ShieldCheck,
@@ -282,7 +283,7 @@ export default function DetectionsPage() {
                             </select>
                           </td>
                           <td className="py-3 px-4 text-slate-400 font-mono text-[11px] whitespace-nowrap">
-                            {new Date(al.timestamp).toLocaleString()}
+                            {formatLocalDateTime(al.timestamp)}
                           </td>
                           <td className="py-3 px-4 text-right">
                             <a
@@ -356,7 +357,7 @@ export default function DetectionsPage() {
                     </div>
 
                     <div className="flex flex-wrap items-center justify-between text-[11px] text-slate-400 pt-1">
-                      <span>Window: {new Date(grp.time_window_start).toLocaleTimeString()} &rarr; {new Date(grp.time_window_end).toLocaleTimeString()}</span>
+                      <span>Window: {formatLocalTime(grp.time_window_start)} &rarr; {formatLocalTime(grp.time_window_end)}</span>
                       <span>{grp.event_ids?.length || 0} Events Chained</span>
                     </div>
                   </div>

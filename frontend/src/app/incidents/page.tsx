@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { AppShell } from "../../components/layout/AppShell";
 import { fetchApi } from "../../lib/api";
+import { formatLocalDate, formatLocalDateTime, formatLocalTime } from "../../lib/date";
 import {
   AlertOctagon,
   Plus,
@@ -312,7 +313,7 @@ export default function IncidentsPage() {
                       <span className="px-2 py-0.5 rounded bg-slate-950 text-cyan-400 font-mono font-medium">
                         {inc.status}
                       </span>
-                      <span>{new Date(inc.created_at).toLocaleDateString()}</span>
+                      <span>{formatLocalDate(inc.created_at)}</span>
                     </div>
                   </div>
                 ))
@@ -331,7 +332,7 @@ export default function IncidentsPage() {
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-mono text-xs text-cyan-400 font-semibold">INC-{selectedIncident.id}</span>
                       <span className="text-xs text-slate-500">&bull;</span>
-                      <span className="text-xs text-slate-400">{new Date(selectedIncident.created_at).toLocaleString()}</span>
+                      <span className="text-xs text-slate-400">{formatLocalDateTime(selectedIncident.created_at)}</span>
                     </div>
                     <h2 className="text-lg font-bold text-slate-100">{selectedIncident.title}</h2>
                   </div>
@@ -513,7 +514,7 @@ export default function IncidentsPage() {
                                     {entry.entry_type}
                                   </span>
                                 </div>
-                                <span className="text-slate-500 font-mono">{new Date(entry.timestamp).toLocaleString()}</span>
+                                <span className="text-slate-500 font-mono">{formatLocalDateTime(entry.timestamp)}</span>
                               </div>
                               <p className="text-slate-300 text-[11px] leading-relaxed">{entry.description}</p>
                               <div className="mt-1.5 text-[10px] text-slate-500 flex items-center gap-1">
@@ -544,7 +545,7 @@ export default function IncidentsPage() {
                           <div key={cm.id} className="p-3 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
                             <div className="flex items-center justify-between text-slate-400 mb-1">
                               <span className="font-semibold text-slate-200">{cm.user_name || "Analyst"}</span>
-                              <span className="text-[10px] font-mono">{new Date(cm.created_at).toLocaleTimeString()}</span>
+                              <span className="text-[10px] font-mono">{formatLocalTime(cm.created_at)}</span>
                             </div>
                             <p className="text-slate-300">{cm.comment}</p>
                           </div>

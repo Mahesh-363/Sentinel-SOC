@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from backend.app.database import get_db
+from backend.app.core.datetime_utils import serialize_utc_datetime
 from backend.app.core.dependencies import get_current_org, require_role
 from backend.app.models.auth import Organization
 from backend.app.models.network import Network, NetworkDevice, NetworkIntegration, NetworkTopologyLink, IPObservation
@@ -293,7 +294,7 @@ def sync_network_integration(
         "status": "success",
         "integration_id": integ.id,
         "name": integ.name,
-        "sync_time": integ.last_sync_at.isoformat(),
+        "sync_time": serialize_utc_datetime(integ.last_sync_at),
         "devices_synced": 4,
         "message": f"Successfully synchronized DHCP lease and ARP tables from {integ.name}."
     }

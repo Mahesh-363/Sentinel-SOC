@@ -7,9 +7,11 @@ from sqlalchemy import func
 
 from backend.app.database import get_db
 from backend.app.config import settings
+from backend.app.core.datetime_utils import serialize_utc_datetime
 from backend.app.core.dependencies import get_current_org, get_current_user, require_role
 from backend.app.core.ai.provider import get_ai_provider
 from backend.app.models.auth import Organization, User, AuditLog, OrganizationMembership
+from backend.app.schemas.auth import AuditLogOut
 from backend.app.models.ai import AIUsageRecord
 from backend.app.models.events import SecurityEvent
 from backend.app.models.detections import DetectionResult
@@ -31,7 +33,7 @@ def get_system_health(db: Session = Depends(get_db)):
         "app_name": settings.APP_NAME,
         "version": settings.APP_VERSION,
         "environment": settings.ENVIRONMENT,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": serialize_utc_datetime(datetime.utcnow()),
         "database": {
             "status": "HEALTHY",
             "dialect": db.bind.dialect.name
@@ -99,7 +101,7 @@ def list_organization_users(
                 "full_name": u.full_name,
                 "role": m.role,
                 "is_active": u.is_active,
-                "joined_at": m.created_at.isoformat()
+                "joined_at": serialize_utc_datetime(m.created_at)
             })
     return result
 
@@ -205,7 +207,7 @@ def get_retention_policy(org: Organization = Depends(get_current_org), db: Sessi
         "event_retention_days": 90,
         "incident_retention_days": 365,
         "total_events_stored": total_events,
-        "oldest_event_timestamp": oldest_event[0].isoformat() if oldest_event else None,
+        "oldest_event_timestamp": serialize_utc_datetime(oldest_event[0]) if oldest_event else None,
         "compliance_standard": "SOC2 / ISO 27001 Log Preservation Policy"
     }
 
@@ -232,9 +234,9 @@ def run_retention_cleanup(
     )
     db.add(audit)
     db.commit()
-    return {"status": "success", "purged_events_count": purged_count, "cutoff_date": cutoff.isoformat()}
+    return {"status": "success", "purged_events_count": purged_count, "cutoff_date": serialize_utc_datetime(cutoff)}
 
-@router.get("/audit-logs", dependencies=[Depends(require_role(["Platform Administrator", "Organization Owner", "Organization Administrator"]))])
+@router.get("/audit-logs", response_model=List[AuditLogOut], dependencies=[Depends(require_role(["Platform Administrator", "Organization Owner", "Organization Administrator"]))])
 def list_audit_logs(
     limit: int = 100,
     org: Organization = Depends(get_current_org),

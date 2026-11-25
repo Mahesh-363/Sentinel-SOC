@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.orm import Session
 
 from backend.app.database import get_db
+from backend.app.core.datetime_utils import serialize_utc_datetime
 from backend.app.core.dependencies import get_current_org, require_role
 from backend.app.models.auth import Organization
 from backend.app.models.incidents import Incident
@@ -30,8 +31,8 @@ def export_incidents_csv(org: Organization = Depends(get_current_org), db: Sessi
             inc.severity,
             inc.status,
             "Yes" if inc.is_simulated else "No",
-            inc.created_at.isoformat(),
-            inc.closed_at.isoformat() if inc.closed_at else "",
+            serialize_utc_datetime(inc.created_at),
+            serialize_utc_datetime(inc.closed_at) or "",
             inc.description
         ])
         
@@ -51,8 +52,8 @@ def export_incidents_json(org: Organization = Depends(get_current_org), db: Sess
             "severity": inc.severity,
             "status": inc.status,
             "is_simulated": inc.is_simulated,
-            "created_at": inc.created_at.isoformat(),
-            "closed_at": inc.closed_at.isoformat() if inc.closed_at else None,
+            "created_at": serialize_utc_datetime(inc.created_at),
+            "closed_at": serialize_utc_datetime(inc.closed_at),
             "description": inc.description,
             "resolution_notes": inc.resolution_notes
         }
@@ -74,7 +75,7 @@ def export_events_csv(org: Organization = Depends(get_current_org), db: Session 
     for e in events:
         writer.writerow([
             e.id,
-            e.timestamp.isoformat(),
+            serialize_utc_datetime(e.timestamp),
             e.event_type,
             e.severity,
             e.title,
@@ -97,7 +98,7 @@ def export_events_json(org: Organization = Depends(get_current_org), db: Session
     data = [
         {
             "id": e.id,
-            "timestamp": e.timestamp.isoformat(),
+            "timestamp": serialize_utc_datetime(e.timestamp),
             "event_type": e.event_type,
             "severity": e.severity,
             "title": e.title,
@@ -129,8 +130,8 @@ def export_threat_intel_csv(db: Session = Depends(get_db)):
             ind.severity,
             ind.source,
             ind.confidence,
-            ind.first_seen.isoformat() if ind.first_seen else "",
-            ind.last_seen.isoformat() if ind.last_seen else ""
+            serialize_utc_datetime(ind.first_seen) or "",
+            serialize_utc_datetime(ind.last_seen) or ""
         ])
     return Response(
         content=output.getvalue(),
@@ -153,8 +154,8 @@ def export_network_inventory_csv(org: Organization = Depends(get_current_org), d
             d.device_type,
             d.discovery_method,
             "Yes" if d.is_authorized else "No",
-            d.first_seen.isoformat(),
-            d.last_seen.isoformat()
+            serialize_utc_datetime(d.first_seen),
+            serialize_utc_datetime(d.last_seen)
         ])
     return Response(
         content=output.getvalue(),
@@ -177,7 +178,7 @@ def export_aws_findings_csv(org: Organization = Depends(get_current_org), db: Se
             f.description,
             f.remediation_guidance or "N/A",
             "Yes" if f.is_simulated else "No",
-            f.created_at.isoformat()
+            serialize_utc_datetime(f.created_at)
         ])
     return Response(
         content=output.getvalue(),
@@ -203,7 +204,7 @@ def get_executive_summary(org: Organization = Depends(get_current_org), db: Sess
     return {
         "organization_id": org.id,
         "organization_name": org.name,
-        "generated_at": datetime.utcnow().isoformat(),
+        "generated_at": serialize_utc_datetime(datetime.utcnow()),
         "total_assets_monitored": total_assets,
         "total_network_devices_discovered": total_devices,
         "total_security_events_recorded": total_events,

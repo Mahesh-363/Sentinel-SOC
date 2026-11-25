@@ -1,6 +1,6 @@
-from datetime import datetime
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, ConfigDict
+from backend.app.core.datetime_utils import UTCDatetime
 
 class AWSAccountCreate(BaseModel):
     account_id: str
@@ -20,8 +20,8 @@ class AWSAccountOut(BaseModel):
     external_id: Optional[str] = None
     region: str
     is_active: bool
-    last_synced: Optional[datetime] = None
-    created_at: datetime
+    last_synced: Optional[UTCDatetime] = None
+    created_at: UTCDatetime
 
 class AWSFindingOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -36,7 +36,7 @@ class AWSFindingOut(BaseModel):
     description: str
     remediation_guidance: Optional[str] = None
     is_simulated: bool
-    created_at: datetime
+    created_at: UTCDatetime
 
 class AWSResourceOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -50,4 +50,4 @@ class AWSResourceOut(BaseModel):
     arn: Optional[str] = None
     region: str
     compliance_status: str
-    last_scanned_at: datetime
+    last_scanned_at: UTCDatetime

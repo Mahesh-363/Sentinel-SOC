@@ -6,6 +6,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from backend.app.database import get_db
+from backend.app.core.datetime_utils import serialize_utc_datetime
 from backend.app.core.dependencies import get_current_org, get_current_user, require_role
 from backend.app.core.ip_utils import classify_ip, get_approximate_geoip
 from backend.app.core.threat_intel.adapters import (
@@ -105,7 +106,7 @@ async def investigate_ip(
             "port": o.destination_port or o.source_port,
             "protocol": o.protocol,
             "source": o.observation_source,
-            "timestamp": o.timestamp.isoformat()
+            "timestamp": serialize_utc_datetime(o.timestamp)
         }
         for o in obs_query.limit(20).all()
     ]
@@ -123,7 +124,7 @@ async def investigate_ip(
             "event_type": e.event_type,
             "severity": e.severity,
             "title": e.title,
-            "timestamp": e.timestamp.isoformat(),
+            "timestamp": serialize_utc_datetime(e.timestamp),
             "is_simulated": e.is_simulated
         }
         for e in events_query.limit(10).all()
@@ -155,7 +156,7 @@ async def investigate_ip(
         first_obs = obs_query.order_by(IPObservation.timestamp.asc()).first()
         if first_obs:
             timeline.append({
-                "timestamp": first_obs.timestamp.isoformat(),
+                "timestamp": serialize_utc_datetime(first_obs.timestamp),
                 "event": "First Observed on Network",
                 "category": "OBSERVATION",
                 "details": f"First connection observed via {first_obs.observation_source} (Direction: {first_obs.direction})"
@@ -171,7 +172,7 @@ async def investigate_ip(
 
     if local_indicator:
         timeline.append({
-            "timestamp": local_indicator.created_at.isoformat(),
+            "timestamp": serialize_utc_datetime(local_indicator.created_at),
             "event": f"Threat Feed Match ({local_indicator.source})",
             "category": "INTEL",
             "details": f"Identified as {local_indicator.threat_type} (Confidence: {local_indicator.confidence}%)"
@@ -179,7 +180,7 @@ async def investigate_ip(
 
     if saved_investigation:
         timeline.append({
-            "timestamp": saved_investigation.updated_at.isoformat(),
+            "timestamp": serialize_utc_datetime(saved_investigation.updated_at),
             "event": f"Analyst Verdict: {saved_investigation.verdict}",
             "category": "INVESTIGATION",
             "details": saved_investigation.notes or "No analyst notes provided."
@@ -259,7 +260,7 @@ async def investigate_ip(
             "verdict": saved_investigation.verdict,
             "notes": saved_investigation.notes,
             "tags": json.loads(saved_investigation.tags_json or "[]"),
-            "updated_at": saved_investigation.updated_at.isoformat()
+            "updated_at": serialize_utc_datetime(saved_investigation.updated_at)
         } if saved_investigation else None,
         "investigation_notes": saved_investigation.notes if saved_investigation else None,
         "tags": json.loads(saved_investigation.tags_json or "[]") if saved_investigation else [],
@@ -303,7 +304,7 @@ def create_or_update_investigation(
     ).first()
 
     timeline_entry = {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": serialize_utc_datetime(datetime.utcnow()),
         "actor": user.full_name,
         "action": "Updated Investigation",
         "verdict": payload.verdict,

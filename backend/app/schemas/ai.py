@@ -1,6 +1,6 @@
-from datetime import datetime
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, ConfigDict
+from backend.app.core.datetime_utils import UTCDatetime
 
 class AIAnalystInvestigateRequest(BaseModel):
     target_type: str  # alert, incident, ip, asset, general
@@ -28,7 +28,7 @@ class AIAnalystInvestigateResponse(BaseModel):
     evidence_sources: List[str] = []
     mitre_techniques: List[str] = []
     structured_breakdown: Optional[AIStructuredEvidenceBreakdown] = None
-    created_at: datetime
+    created_at: UTCDatetime
 
 class HelpdeskChatRequest(BaseModel):
     conversation_id: Optional[str] = None
@@ -44,7 +44,7 @@ class HelpdeskMessageOut(BaseModel):
     sender_role: str
     message: str
     citations: Optional[List[Dict[str, Any]]] = None
-    created_at: datetime
+    created_at: UTCDatetime
 
 class HelpdeskConversationOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -52,8 +52,8 @@ class HelpdeskConversationOut(BaseModel):
     id: str
     title: str
     context_page: Optional[str] = None
-    created_at: datetime
-    updated_at: datetime
+    created_at: UTCDatetime
+    updated_at: UTCDatetime
     messages: List[HelpdeskMessageOut] = []
 
 class DiagnosticShareIn(BaseModel):
